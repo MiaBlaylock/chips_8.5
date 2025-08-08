@@ -5,9 +5,47 @@
 <h2>Search in TMDb</h2>
 <%# Part 5 here %>
 
+<% flash.each do |key, value| %>
+  <div class="alert alert-<%= key %> alert-dismissible fade show" role="alert">
+    <%= value %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>
+
+<% if @movies.present? %>
+  <table class="table table-striped col-md-12" id="search_movies">
+    <thead>
+      <tr>
+        <th>Movie Title</th>
+        <th>Rating</th>
+        <th>Release Date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @movies.each do |m| %>
+        <tr>
+          <td><%= m['title'] %></td>
+          <td><%= m['rating'] %></td>
+          <td><%= m['release_date'] %></td>
+          <td>
+            <%= form_tag add_movie_path, method: :post do %>
+              <%= hidden_field_tag :title, m['title'] %>
+              <%= hidden_field_tag :release_date, m['release_date'] %>
+              <%= hidden_field_tag :rating, m['rating'] %>
+              <%= submit_tag 'Add movie', class: 'btn btn-success' %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+
 <div class="search-container">
 <%# Part 1 here %>
-<%= form_tag <%# fill in here #%> do %>
+<%= form_tag movies_search_tmdb_path, method: :post, id: "tmdb_forms" do %>
     <label for="searchMovieName">Movie Name</label>
     <%= text_field_tag 'title', nil, class: "form-control", id: "movie_title_field", placeholder: "Manhunter", id: "movie_title_field"%> 
     <label for="searchReleaseDateField">Release Year</label>
@@ -22,7 +60,12 @@
     <%= radio_button_tag 'language', 'all', true, class: "form-check-input" %>
     <label class="form-check-label" for="language_all">All Languages</label>
   </div>
+
+  <div class="row">
   <%= submit_tag 'Search', id: 'tmdb_submit', class: 'btn btn-warning col-2' %>
+  <%= link_to 'Back to movie list', movies_path, class: 'btn btn-primary col-2' %>
+  </div>
   
-<% end %>
+<% end %> 
+
 </div>
